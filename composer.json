@@ -9,6 +9,12 @@
             "email": "joris@statik.be"
         }
     ],
+    "require": {
+        "pallo/lib-encryption": ">=0.1.0",
+        "pallo/lib-event": ">=0.3.2",
+        "pallo/lib-http": ">=0.2.1",
+        "pallo/lib-log": ">=0.2.1",
+    },    
     "autoload": {
         "psr-0": {
             "pallo\\library\\security\\": ["src/", "test/src/"]
