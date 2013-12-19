@@ -131,7 +131,7 @@ class ChainedSecurityModel implements SecurityModel {
      */
     public function getUserByEmail($email) {
         foreach ($this->models as $model) {
-            $user = $model->getUserByEmail($username);
+            $user = $model->getUserByEmail($email);
             if ($user) {
                 return $user;
             }
