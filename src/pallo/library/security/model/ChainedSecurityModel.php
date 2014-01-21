@@ -203,7 +203,7 @@ class ChainedSecurityModel implements SecurityModel {
     public function setRolesToUser(User $user, array $roles) {
         foreach ($this->models as $model) {
             if ($model->ownsUser($user)) {
-                $model->setRolesToUser($user);
+                $model->setRolesToUser($user, $roles);
 
                 return;
             }
