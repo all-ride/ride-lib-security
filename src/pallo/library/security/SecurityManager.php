@@ -412,4 +412,18 @@ class SecurityManager {
         return false;
     }
 
+    /**
+     * Checks whether the current user is allowed to view the provided URL
+     * @param string $url URL to check
+     * @return boolean
+     */
+    public function isUrlAllowed($url) {
+        $path = parse_url($url, PHP_URL_PATH);
+        if ($path === null) {
+            throw new SecurityException('Could not check the permissions of a URL: provided URL is invalid');
+        }
+
+        return $this->isPathAllowed($path);
+    }
+
 }
