@@ -16,7 +16,11 @@ class GenericPathMatcher implements PathMatcher {
      */
     public function matchPath($path, array $pathRegexes) {
         foreach ($pathRegexes as $regex) {
-            $regex = str_replace(PathMatcher::ASTERIX, '([\w|\W])*', $regex);
+            $regex = str_replace(PathMatcher::ASTERIX . PathMatcher::ASTERIX, '||||||', $regex);
+            $regex = str_replace(PathMatcher::ASTERIX, '|||', $regex);
+
+            $regex = str_replace('||||||', '([\w|\W])*', $regex);
+            $regex = str_replace('|||', '([^/])*', $regex);
             $regex = str_replace('/', '\\/', $regex);
             $regex = '/^' . $regex . '$/';
 
