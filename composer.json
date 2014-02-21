@@ -1,6 +1,6 @@
 {
-    "name": "pallo/lib-security",
-    "description": "Security library of the Pallo framework",
+    "name": "ride/lib-security",
+    "description": "Security library of the Ride framework",
     "license": "MIT",
     "version": "0.1.6",
     "authors": [
@@ -10,14 +10,14 @@
         }
     ],
     "require": {
-        "pallo/lib-encryption": ">=0.1.0",
-        "pallo/lib-event": ">=0.3.2",
-        "pallo/lib-http": ">=0.2.1",
-        "pallo/lib-log": ">=0.2.1"
+        "ride/lib-encryption": ">=0.1.0",
+        "ride/lib-event": ">=0.3.2",
+        "ride/lib-http": ">=0.2.1",
+        "ride/lib-log": ">=0.2.1"
     },    
     "autoload": {
         "psr-0": {
-            "pallo\\library\\security\\": ["src/", "test/src/"]
+            "ride\\library\\security\\": ["src/", "test/src/"]
         }
     }
 }

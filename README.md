@@ -1,3 +1,3 @@
-# Pallo: Security Library
+# Ride: Security Library
 
-Security library of the PHP Pallo framework.
+Security library of the PHP Ride framework.
