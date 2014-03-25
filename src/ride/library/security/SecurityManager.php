@@ -61,50 +61,50 @@ class SecurityManager {
      * Authenticator which is being used
      * @var ride\library\security\authenticator\Authenticator
      */
-    private $authenticator;
+    protected $authenticator;
 
     /**
      * Instance of the event manager
      * @var ride\library\event\EventManager
      */
-    private $eventManager;
+    protected $eventManager;
 
     /**
      * Instance of the Log
      * @var ride\library\log\Log
      */
-    private $log;
+    protected $log;
 
     /**
      * Security model which is being used
      * @var ride\library\security\model\SecurityModel
      */
-    private $model;
+    protected $model;
 
     /**
      * Hash algorithm for passwords
      * @var ride\library\encryption\hash\Hash
      */
-    private $hashAlgorithm;
+    protected $hashAlgorithm;
 
     /**
      * Matcher for a path against path regular expressions
      * @var ride\library\security\matcher\PathMatcher
      */
-    private $pathMatcher;
+    protected $pathMatcher;
 
     /**
      * Incoming request to authenticate the user
      * @var ride\library\http\Request
      */
-    private $request;
+    protected $request;
 
     /**
      * Flag to see if the authenticate method has been invoken on the
      * authenticator
      * @var boolean
      */
-    private $isAuthenticated;
+    protected $isAuthenticated;
 
     /**
      * Constructs a new security manager
