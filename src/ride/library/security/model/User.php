@@ -108,7 +108,7 @@ interface User {
     /**
      * Checks whether a path is allowed for this user
      * @param string $path Path to check
-     * @param ride\library\security\matcher\PathMatcher $pathMatcher To match
+     * @param \ride\library\security\matcher\PathMatcher $pathMatcher To match
      * path regular expression on the route
      * @return boolean True if the path is allowed, false otherwise
      */

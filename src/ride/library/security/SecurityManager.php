@@ -11,7 +11,6 @@ use ride\library\security\exception\PathMatcherNotSetException;
 use ride\library\security\exception\SecurityModelNotSetException;
 use ride\library\security\exception\SecurityException;
 use ride\library\security\matcher\PathMatcher;
-use ride\library\security\model\Role;
 use ride\library\security\model\SecurityModel;
 use ride\library\security\model\User;
 
@@ -59,43 +58,43 @@ class SecurityManager {
 
     /**
      * Authenticator which is being used
-     * @var ride\library\security\authenticator\Authenticator
+     * @var \ride\library\security\authenticator\Authenticator
      */
     protected $authenticator;
 
     /**
      * Instance of the event manager
-     * @var ride\library\event\EventManager
+     * @var \ride\library\event\EventManager
      */
     protected $eventManager;
 
     /**
      * Instance of the Log
-     * @var ride\library\log\Log
+     * @var \ride\library\log\Log
      */
     protected $log;
 
     /**
      * Security model which is being used
-     * @var ride\library\security\model\SecurityModel
+     * @var \ride\library\security\model\SecurityModel
      */
     protected $model;
 
     /**
      * Hash algorithm for passwords
-     * @var ride\library\encryption\hash\Hash
+     * @var \ride\library\encryption\hash\Hash
      */
     protected $hashAlgorithm;
 
     /**
      * Matcher for a path against path regular expressions
-     * @var ride\library\security\matcher\PathMatcher
+     * @var \ride\library\security\matcher\PathMatcher
      */
     protected $pathMatcher;
 
     /**
      * Incoming request to authenticate the user
-     * @var ride\library\http\Request
+     * @var \ride\library\http\Request
      */
     protected $request;
 
@@ -108,8 +107,8 @@ class SecurityManager {
 
     /**
      * Constructs a new security manager
-     * @param ride\core\Zibo $ride Instance of Zibo to trigger events
-     * @param ride\library\security\authenticator\Authenticator $authenticator
+     * @param \ride\library\system\system $ride Instance of Zibo to trigger events
+     * @param \ride\library\security\authenticator\Authenticator $authenticator
      * @return null
      */
     public function __construct(Authenticator $authenticator, EventManager $eventManager) {
@@ -123,7 +122,7 @@ class SecurityManager {
 
     /**
      * Sets the instance of the Log
-     * @param ride\library\log\Log $log
+     * @param \ride\library\log\Log $log
      * @return null
      */
     public function setLog(Log $log) {
@@ -132,7 +131,7 @@ class SecurityManager {
 
     /**
      * Sets the hash algorithm
-     * @param ride\library\encryption\hash\Hash $hashAlgorithm Hash
+     * @param \ride\library\encryption\hash\Hash $hashAlgorithm Hash
      * implementation
      * @return null
      */
@@ -155,7 +154,7 @@ class SecurityManager {
 
     /**
      * Sets the authenticator
-     * @param ride\library\security\authenticator\Authenticator $authenticator
+     * @param \ride\library\security\authenticator\Authenticator $authenticator
      * @return null
      */
     public function setAuthenticator(Authenticator $authenticator) {
@@ -167,7 +166,7 @@ class SecurityManager {
 
     /**
      * Gets the authenticator which is currently in use
-     * @return ride\library\security\authenticator\Authenticator
+     * @return \ride\library\security\authenticator\Authenticator
      */
     public function getAuthenticator() {
         return $this->authenticator;
@@ -175,7 +174,7 @@ class SecurityManager {
 
     /**
      * Sets the security model
-     * @param ride\library\security\model\SecurityModel $model Security model to use
+     * @param \ride\library\security\model\SecurityModel $model Security model to use
      * @return null
      */
     public function setSecurityModel(SecurityModel $model = null) {
@@ -215,8 +214,8 @@ class SecurityManager {
     /**
      * Gets the security model which is currently in use
      * @param boolean $throwException Set to true to throw an exception when no security model has been set
-     * @return ride\library\security\model\SecurityModel|null
-     * @throws ride\library\security\exception\SecurityModelNotSetException when $throwException is set to true and no security model has been set
+     * @return \ride\library\security\model\SecurityModel|null
+     * @throws \ride\library\security\exception\SecurityModelNotSetException when $throwException is set to true and no security model has been set
      */
     public function getSecurityModel($throwException = true) {
         if ($throwException && !$this->model) {
@@ -237,7 +236,7 @@ class SecurityManager {
 
     /**
      * Gets the path matcher
-     * @return ride\library\security\matcher\PathMatcher|null
+     * @return \ride\library\security\matcher\PathMatcher|null
      */
     public function getPathMatcher() {
         if (!$this->pathMatcher) {
@@ -249,7 +248,7 @@ class SecurityManager {
 
     /**
      * Sets the incoming request to make it available to the authenticator
-     * @param ride\library\http\Request $request
+     * @param \ride\library\http\Request $request
      * @return null
      */
     public function setRequest(Request $request) {
@@ -258,7 +257,7 @@ class SecurityManager {
 
     /**
      * Gets the current user
-     * @return ride\library\security\model\User Current user if authenticated,
+     * @return \ride\library\security\model\User Current user if authenticated,
      * null otherwise
      */
     public function getUser() {
@@ -279,7 +278,7 @@ class SecurityManager {
 
     /**
      * Sets the current user
-     * @param ride\library\security\model\User $user Current user
+     * @param \ride\library\security\model\User $user Current user
      * @return null
      */
     public function setUser(User $user) {
@@ -290,8 +289,8 @@ class SecurityManager {
      * Switch the current user
      * @param string $username Username to switch
      * @return null
-     * @throws ride\library\security\exception\UnauthorizedException when not authenticated
-     * @throws ride\library\security\exception\UserNotFoundException when the requested user could not be found
+     * @throws \ride\library\security\exception\UnauthorizedException when not authenticated
+     * @throws \ride\library\security\exception\UserNotFoundException when the requested user could not be found
      */
     public function switchUser($username) {
         $this->authenticator->switchUser($username);
@@ -301,11 +300,11 @@ class SecurityManager {
      * Login a user
      * @param string $username The provided username
      * @param string $password The provided password
-     * @return ride\library\security\model\User|null The user if the login
+     * @return \ride\library\security\model\User|null The user if the login
      * succeeded, null otherwise
-     * @throws ride\library\security\exception\AuthenticationException when
+     * @throws \ride\library\security\exception\AuthenticationException when
      * the user could not be authenticated
-     * @throws ride\library\security\exception\SecurityModelNotSetException
+     * @throws \ride\library\security\exception\SecurityModelNotSetException
      * when no security model has been set
      */
     public function login($username, $password) {
@@ -319,7 +318,7 @@ class SecurityManager {
     /**
      * Logout the current user
      * @return null
-     * @throws ride\library\security\exception\SecurityModelNotSetException
+     * @throws \ride\library\security\exception\SecurityModelNotSetException
      * when no security model has been set
      */
     public function logout() {
@@ -330,7 +329,7 @@ class SecurityManager {
      * Checks whether the current user is granted the provided permission
      * @param string $code Code of the permission
      * @return boolean True if granted, false otherwise
-     * @throws ride\library\security\exception\SecurityModelNotSetException
+     * @throws \ride\library\security\exception\SecurityModelNotSetException
      * when no security model has been set
      */
     public function isPermissionGranted($code) {

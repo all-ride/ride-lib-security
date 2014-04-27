@@ -56,7 +56,7 @@ class AuthenticationException extends SecurityException {
      * Sets the name of the field that caused this exception
      * @param string $field name of the field
      * @return null
-     * @throws ride\ZiboException when the provided field name id not username, password or null
+     * @throws \ride\library\security\exception\SecurityException when the provided field name id not username, password or null
      */
     private function setField($field) {
         if ($field == null) {

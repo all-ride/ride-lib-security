@@ -13,7 +13,7 @@ interface Authenticator {
 
     /**
      * Sets the security manager to the authenticator
-     * @param ride\library\security\SecurityManager $manager Instance of the
+     * @param \ride\library\security\SecurityManager $manager Instance of the
      * security manager
      * @return null
      */
@@ -21,15 +21,15 @@ interface Authenticator {
 
     /**
      * Gets the security manager of the authenticator
-     * @return ride\library\security\SecurityManager $manager Instance of the
+     * @return \ride\library\security\SecurityManager $manager Instance of the
      * security manager
      */
     public function getSecurityManager();
 
     /**
      * Authenticates a user through the incoming request
-     * @param ride\library\http\Request $request
-     * @return ride\library\security\model\User|null User if the authentication
+     * @param \ride\library\http\Request $request
+     * @return \ride\library\security\model\User|null User if the authentication
      * succeeded
      */
     public function authenticate(Request $request);
@@ -38,8 +38,8 @@ interface Authenticator {
      * Login a user
      * @param string $username Provided username
      * @param string $password Provided password
-     * @return ride\library\security\model\User The user if the login succeeded
-     * @throws ride\library\security\exception\AuthenticationException when the
+     * @return \ride\library\security\model\User The user if the login succeeded
+     * @throws \ride\library\security\exception\AuthenticationException when the
      * user could not be authenticated
      */
     public function login($username, $password);
@@ -53,14 +53,14 @@ interface Authenticator {
 
     /**
      * Gets the current user
-     * @return ride\library\security\model\User|null The current user if logged
+     * @return \ride\library\security\model\User|null The current user if logged
      * in, null otherwise
      */
     public function getUser();
 
     /**
      * Sets the current authenticated user
-     * @param ride\library\security\model\User $user User to set the
+     * @param \ride\library\security\model\User $user User to set the
      * authentication status for
      * @return User updated user with the information of the authentification
      */
@@ -71,9 +71,9 @@ interface Authenticator {
      * the user before switching will again be the current user
      * @param string $username The username of the user to switch to
      * @return null
-     * @throws ride\library\security\exception\UnauthorizedException when not
+     * @throws \ride\library\security\exception\UnauthorizedException when not
      * authenticated
-     * @throws ride\library\security\exception\UserNotFoundException when the
+     * @throws \ride\library\security\exception\UserNotFoundException when the
      * requested user could not be found
      */
     public function switchUser($username);
