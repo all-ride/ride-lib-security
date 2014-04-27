@@ -3,9 +3,7 @@
 namespace ride\library\security\authenticator;
 
 use ride\library\http\Request;
-use ride\library\security\exception\AuthenticationException;
 use ride\library\security\exception\SecurityException;
-use ride\library\security\exception\UnauthorizedException;
 use ride\library\security\exception\UsernameAuthenticationException;
 use ride\library\security\model\User;
 use ride\library\security\SecurityManager;
@@ -43,7 +41,7 @@ class ChainedAuthenticator extends AbstractAuthenticator {
 
     /**
      * Sets the security manager to the authenticator
-     * @param ride\library\security\SecurityManager $manager Instance of the
+     * @param \ride\library\security\SecurityManager $manager Instance of the
      * security manager
      * @return null
      */
@@ -55,8 +53,8 @@ class ChainedAuthenticator extends AbstractAuthenticator {
 
     /**
      * Authenticates a user through the incoming request
-     * @param ride\library\http\Request $request
-     * @return ride\library\security\model\User|null User if the authentication
+     * @param \ride\library\http\Request $request
+     * @return \ride\library\security\model\User|null User if the authentication
      * succeeded
      */
     public function authenticate(Request $request) {
@@ -76,8 +74,8 @@ class ChainedAuthenticator extends AbstractAuthenticator {
      * Login a user
      * @param string $username Provided username
      * @param string $password Provided password
-     * @return ride\library\security\model\User The user if the login succeeded
-     * @throws ride\library\security\exception\AuthenticationException when the
+     * @return \ride\library\security\model\User The user if the login succeeded
+     * @throws \ride\library\security\exception\AuthenticationException when the
      * user could not be authenticated
      */
     public function login($username, $password) {
@@ -109,7 +107,7 @@ class ChainedAuthenticator extends AbstractAuthenticator {
 
     /**
      * Gets the current user
-     * @return ride\library\security\model\User|null The current user if logged
+     * @return \ride\library\security\model\User|null The current user if logged
      * in, null otherwise
      */
     public function getUser() {
@@ -135,7 +133,7 @@ class ChainedAuthenticator extends AbstractAuthenticator {
 
     /**
      * Sets the current authenticated user
-     * @param ride\library\security\model\User $user User to set the
+     * @param \ride\library\security\model\User $user User to set the
      * authentication status for
      * @return User updated user with the information of the authentification
      */
@@ -154,9 +152,9 @@ class ChainedAuthenticator extends AbstractAuthenticator {
      * the user before switching will again be the current user
      * @param string $username The username of the user to switch to
      * @return null
-     * @throws ride\library\security\exception\UnauthorizedException when not
+     * @throws \ride\library\security\exception\UnauthorizedException when not
      * authenticated
-     * @throws ride\library\security\exception\UserNotFoundException when the
+     * @throws \ride\library\security\exception\UserNotFoundException when the
      * requested user could not be found
      */
     public function switchUser($username) {

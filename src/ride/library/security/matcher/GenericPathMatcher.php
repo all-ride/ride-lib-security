@@ -15,10 +15,31 @@ class GenericPathMatcher implements PathMatcher {
      * @return boolean True if matched, false otherwise
      */
     public function matchPath($path, array $pathRegexes) {
-        foreach ($pathRegexes as $regex) {
-            $regex = str_replace(PathMatcher::ASTERIX . PathMatcher::ASTERIX, '||||||', $regex);
-            $regex = str_replace(PathMatcher::ASTERIX, '|||', $regex);
+        foreach ($pathRegexes as $pathRegex) {
+            $positionAsterix = strpos($pathRegex, self::ASTERIX);
 
+            if ($positionAsterix === false && strpos($pathRegex, '!') === false) {
+                // no regular expression characters, use regular comparisson
+                if ($path === $pathRegex) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            $lengthPathRegex = strlen($pathRegex);
+            if ($positionAsterix === $lengthPathRegex - 2 && $pathRegex[$lengthPathRegex - 1] == self::ASTERIX) {
+                // match everything beginning with a string, use regular string comparisson
+                if (strncmp($pathRegex, $path, $lengthPathRegex - 2) === 0) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            // use regular expression matching
+            $regex = str_replace(PathMatcher::ASTERIX . PathMatcher::ASTERIX, '||||||', $pathRegex);
+            $regex = str_replace(PathMatcher::ASTERIX, '|||', $regex);
             $regex = str_replace('||||||', '([\w|\W])*', $regex);
             $regex = str_replace('|||', '([^/])*', $regex);
             $regex = str_replace('/', '\\/', $regex);

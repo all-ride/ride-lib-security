@@ -252,6 +252,20 @@ class ChainedSecurityModel implements SecurityModel {
     }
 
     /**
+     * Gets all the roles
+     * @return array
+     */
+    public function getRoles() {
+        $roles = array();
+
+        foreach ($this->models as $model) {
+            $roles += $model->getRoles();
+        }
+
+        return $roles;
+    }
+
+    /**
      * Finds roles by it's name
      * @param string $query Part of the name
      * @return array Array with Role objects

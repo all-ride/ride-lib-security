@@ -3,7 +3,6 @@
 namespace ride\library\security\authenticator;
 
 use ride\library\security\authenticator\io\AuthenticatorIO;
-use ride\library\security\authenticator\AbstractAuthenticator;
 use ride\library\security\exception\InactiveAuthenticationException;
 use ride\library\security\exception\PasswordAuthenticationException;
 use ride\library\security\exception\UnauthorizededException;
@@ -110,8 +109,8 @@ class GenericAuthenticator extends AbstractAuthenticator {
      * Login a user
      * @param string $username
      * @param string $password
-     * @return ride\library\security\model\User User instance if login succeeded
-     * @throws ride\library\security\exception\AuthenticationException when the
+     * @return \ride\library\security\model\User User instance if login succeeded
+     * @throws \ride\library\security\exception\AuthenticationException when the
      * login failed
      */
     public function login($username, $password) {
@@ -151,9 +150,9 @@ class GenericAuthenticator extends AbstractAuthenticator {
 
     /**
      * Gets the current user.
-     * @return ride\library\security\model\User User instance if a user is
+     * @return \ride\library\security\model\User User instance if a user is
      * logged in, null otherwise
-     * @throws ride\library\security\exception\UnauthorizedException when a
+     * @throws \ride\library\security\exception\UnauthorizedException when a
      * user switch is set but not allowed
      */
     public function getUser() {
@@ -209,7 +208,7 @@ class GenericAuthenticator extends AbstractAuthenticator {
 
     /**
      * Sets the current authenticated user
-     * @param ride\library\security\model\User $user User to set the
+     * @param \ride\library\security\model\User $user User to set the
      * authentication for
      * @return User updated user with the information of the authentification
      */
@@ -250,9 +249,9 @@ class GenericAuthenticator extends AbstractAuthenticator {
      * the user before switching will be the current user
      * @param string $username The username of the user to switch to
      * @return null
-     * @throws ride\library\security\exception\UnauthorizedException when not
+     * @throws \ride\library\security\exception\UnauthorizedException when not
      * authenticated or not allowed to switch
-     * @throws ride\library\security\exception\UserNotFoundException when the
+     * @throws \ride\library\security\exception\UserNotFoundException when the
      * requested user could not be found
      */
     public function switchUser($username) {
@@ -280,7 +279,7 @@ class GenericAuthenticator extends AbstractAuthenticator {
 
     /**
      * Checks if the provided user is uniquely authenticated
-     * @param ride\library\security\model\User $user
+     * @param \ride\library\security\model\User $user
      * @return boolean True If the authentication is unique, false otherwise
      */
     protected function isUniqueAuthentication(User $user) {
@@ -327,7 +326,7 @@ class GenericAuthenticator extends AbstractAuthenticator {
      * Sets the salt which is used to create a identifier
      * @param string salt
      * @return null
-     * @throws ride\library\security\exception\SecurityException when an
+     * @throws \ride\library\security\exception\SecurityException when an
      * invalid salt is provided
      */
     public function setSalt($salt) {
@@ -350,7 +349,7 @@ class GenericAuthenticator extends AbstractAuthenticator {
      * Sets the timeout of the authentification
      * @param integer $timeout Timeout in seconds
      * @return null
-     * @throws ride\library\security\exception\SecurityException when the
+     * @throws \ride\library\security\exception\SecurityException when the
      * provided timeout is invalid
      */
     public function setTimeout($timeout) {
