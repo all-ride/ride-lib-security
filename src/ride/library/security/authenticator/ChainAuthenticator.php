@@ -11,7 +11,7 @@ use ride\library\security\SecurityManager;
 /**
  * Authenticator to chain multiple authenticators together
  */
-class ChainedAuthenticator extends AbstractAuthenticator {
+class ChainAuthenticator extends AbstractAuthenticator {
 
     /**
      * Constructs a new chained authenticator

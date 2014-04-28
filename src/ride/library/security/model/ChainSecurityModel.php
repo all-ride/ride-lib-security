@@ -5,7 +5,7 @@ namespace ride\library\security\model;
 /**
  * Chain of security models
  */
-class ChainedSecurityModel implements SecurityModel {
+class ChainSecurityModel implements SecurityModel {
 
     /**
      * Models to wrap
