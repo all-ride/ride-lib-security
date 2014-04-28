@@ -99,13 +99,67 @@ class ChainedSecurityModel implements SecurityModel {
     }
 
     /**
-     * Creates a new user
-     * @return User
+     * Sets the granted permissions to a role
+     * @param Role $role Role to set the permissions to
+     * @param array $permissionCodes Array with a permission code per element
+     * @return null
      */
-    public function createUser() {
+    public function setGrantedPermissionsToRole(Role $role, array $permissionCodes) {
         foreach ($this->models as $model) {
-            return $model->createUser();
+            if ($model->ownsRole($role)) {
+                $model->setGrantedPermissionsToRole($role, $permissionCodes);
+
+                return;
+            }
         }
+    }
+
+    /**
+     * Sets the allowed paths to a role
+     * @param Role $role Role to set the routes to
+     * @param array $paths Array with a path regular expression per element
+     * @return null
+     */
+    public function setAllowedPathsToRole(Role $role, array $paths) {
+        foreach ($this->models as $model) {
+            if ($model->ownsRole($role)) {
+                $model->setAllowedPathsToRole($role, $paths);
+
+                return;
+            }
+        }
+    }
+
+    /**
+     * Saves the provided roles for the provided user
+     * @param User $user User to update
+     * @param array $roles The roles to set to the user
+     * @return null
+     */
+    public function setRolesToUser(User $user, array $roles) {
+        foreach ($this->models as $model) {
+            if ($model->ownsUser($user)) {
+                $model->setRolesToUser($user, $roles);
+
+                return;
+            }
+        }
+    }
+
+    /**
+     * Gets a user by it's id
+     * @param string $id Id of the user
+     * @return User|null User object if found, null otherwise
+     */
+    public function getUserById($id) {
+        foreach ($this->models as $model) {
+            $user = $model->getUserById($id);
+            if ($user) {
+                return $user;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -141,18 +195,30 @@ class ChainedSecurityModel implements SecurityModel {
     }
 
     /**
-     * Find the users which match the provided part of a username
-     * @param string $query Part of a username to match
-     * @return array Array with the usernames which match the provided query
+     * Gets the users
+     * @param array $options Extra options for the query
+     * <ul>
+     *     <li>query</li>
+     *     <li>name</li>
+     *     <li>username</li>
+     *     <li>email</li>
+     *     <li>page</li>
+     *     <li>limit</li>
+     * </ul>
+     * @return array
      */
-    public function findUsersByUsername($query) {
+    public function getUsers(array $options = null) {
         $users = array();
 
         foreach ($this->models as $model) {
-            $modelUsers = $model->findUsersByUsername($query);
+            $modelUsers = $model->getUsers($options);
 
             foreach ($modelUsers as $user) {
                 $users[] = $user;
+
+                if (isset($options['limit']) && count($users) >= $options['limit']) {
+                    break 2;
+                }
             }
         }
 
@@ -160,23 +226,34 @@ class ChainedSecurityModel implements SecurityModel {
     }
 
     /**
-     * Find the users which match the provided part of a email address
-     * @param string $query Part of a email address
-     * @return array Array with the usernames of the users which match the
-     * provided query
+     * Counts the users
+     * @param array $options Extra options for the query
+     * <ul>
+     *     <li>query</li>
+     *     <li>name</li>
+     *     <li>username</li>
+     *     <li>email</li>
+     * </ul>
+     * @return integer
      */
-    public function findUsersByEmail($query) {
-        $users = array();
+    public function countUsers(array $options = null) {
+        $count = 0;
 
         foreach ($this->models as $model) {
-            $modelUsers = $model->findUsersByEmail($query);
-
-            foreach ($modelUsers as $user) {
-                $users[] = $user;
-            }
+            $count += $model->countUsers($options);
         }
 
-        return $users;
+        return $count;
+    }
+
+    /**
+     * Creates a new user
+     * @return User
+     */
+    public function createUser() {
+        foreach ($this->models as $model) {
+            return $model->createUser();
+        }
     }
 
     /**
@@ -188,22 +265,6 @@ class ChainedSecurityModel implements SecurityModel {
         foreach ($this->models as $model) {
             if ($model->ownsUser($user)) {
                 $model->saveUser($user);
-
-                return;
-            }
-        }
-    }
-
-    /**
-     * Saves the provided roles for the provided user
-     * @param User $user User to update
-     * @param array $roles The roles to set to the user
-     * @return null
-     */
-    public function setRolesToUser(User $user, array $roles) {
-        foreach ($this->models as $model) {
-            if ($model->ownsUser($user)) {
-                $model->setRolesToUser($user, $roles);
 
                 return;
             }
@@ -226,13 +287,19 @@ class ChainedSecurityModel implements SecurityModel {
     }
 
     /**
-     * Creates a new role
-     * @return Role
+     * Gets a role by it's id
+     * @param string $id Id of the role
+     * @return Role|null Role object if found, null otherwise
      */
-    public function createRole() {
+    public function getRoleById($id) {
         foreach ($this->models as $model) {
-            return $model->createRole();
+            $role = $model->getRoleById($id);
+            if ($role) {
+                return $role;
+            }
         }
+
+        return null;
     }
 
     /**
@@ -253,35 +320,60 @@ class ChainedSecurityModel implements SecurityModel {
 
     /**
      * Gets all the roles
+     * @param array $options Extra options for the query
+     * <ul>
+     *     <li>name</li>
+     *     <li>query</li>
+     *     <li>page</li>
+     *     <li>limit</li>
+     * </ul>
      * @return array
      */
-    public function getRoles() {
+    public function getRoles(array $options = null) {
         $roles = array();
 
         foreach ($this->models as $model) {
-            $roles += $model->getRoles();
+            $modelRoles = $model->getRoles($options);
+
+            foreach ($modelRoles as $role) {
+                $roles[] = $role;
+
+                if (isset($options['limit']) && count($roles) >= $options['limit']) {
+                    break 2;
+                }
+            }
         }
 
         return $roles;
     }
 
     /**
-     * Finds roles by it's name
-     * @param string $query Part of the name
-     * @return array Array with Role objects
+     * Counts the roles
+     * @param array $options Extra options for the query
+     * <ul>
+     *     <li>query</li>
+     *     <li>name</li>
+     * </ul>
+     * @return integer
      */
-    public function findRolesByName($query) {
-        $roles = array();
+    public function countRoles(array $options = null) {
+        $count = 0;
 
         foreach ($this->models as $model) {
-            $modelRoles = $model->findRolesByName($query);
-
-            foreach ($modelRoles as $role) {
-                $roles[] = $role;
-            }
+            $count += $model->countRoles($options);
         }
 
-        return $roles;
+        return $count;
+    }
+
+    /**
+     * Creates a new role
+     * @return Role
+     */
+    public function createRole() {
+        foreach ($this->models as $model) {
+            return $model->createRole();
+        }
     }
 
     /**
@@ -293,38 +385,6 @@ class ChainedSecurityModel implements SecurityModel {
         foreach ($this->models as $model) {
             if ($model->ownsRole($role)) {
                 $model->saveRole($role);
-
-                return;
-            }
-        }
-    }
-
-    /**
-     * Sets the granted permissions to a role
-     * @param Role $role Role to set the permissions to
-     * @param array $permissionCodes Array with a permission code per element
-     * @return null
-     */
-    public function setGrantedPermissionsToRole(Role $role, array $permissionCodes) {
-        foreach ($this->models as $model) {
-            if ($model->ownsRole($role)) {
-                $model->setGrantedPermissionsToRole($role, $permissionCodes);
-
-                return;
-            }
-        }
-    }
-
-    /**
-     * Sets the allowed paths to a role
-     * @param Role $role Role to set the routes to
-     * @param array $paths Array with a path regular expression per element
-     * @return null
-     */
-    public function setAllowedPathsToRole(Role $role, array $paths) {
-        foreach ($this->models as $model) {
-            if ($model->ownsRole($role)) {
-                $model->setAllowedPathsToRole($role, $paths);
 
                 return;
             }
@@ -384,9 +444,9 @@ class ChainedSecurityModel implements SecurityModel {
      * @param string $code Code of the permission
      * @return null
      */
-    public function registerPermission($code) {
+    public function addPermission($code) {
         foreach ($this->models as $model) {
-            $model->registerPermission($code);
+            $model->addPermission($code);
 
             return;
         }
@@ -397,9 +457,9 @@ class ChainedSecurityModel implements SecurityModel {
      * @param string $code Code of the permission
      * @return null
      */
-    public function unregisterPermission($code) {
+    public function deletePermission($code) {
         foreach ($this->models as $model) {
-            $model->unregisterPermission($code);
+            $model->deletePermission($code);
         }
     }
 

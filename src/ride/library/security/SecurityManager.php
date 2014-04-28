@@ -342,7 +342,7 @@ class SecurityManager {
         }
 
         if (!$this->model->hasPermission($code)) {
-            $this->model->registerPermission($code);
+            $this->model->addPermission($code);
         }
 
         $user = $this->getUser();

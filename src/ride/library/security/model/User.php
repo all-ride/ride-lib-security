@@ -42,12 +42,6 @@ interface User {
     public function getUserName();
 
     /**
-     * Gets the password of this user
-     * @return string Encrypted password
-     */
-    public function getPassword();
-
-    /**
      * Sets a new password for this user
      *
      * This method will run the security.password.update event before setting the password. This event
@@ -59,10 +53,10 @@ interface User {
     public function setPassword($password);
 
     /**
-     * Gets the email address of this user
-     * @return string
+     * Gets the password of this user
+     * @return string Encrypted password
      */
-    public function getEmail();
+    public function getPassword();
 
     /**
      * Sets the email address of this user
@@ -72,10 +66,10 @@ interface User {
     public function setEmail($email);
 
     /**
-     * Gets whether this user is active
-     * @return boolean
+     * Gets the email address of this user
+     * @return string
      */
-    public function isActive();
+    public function getEmail();
 
     /**
      * Sets whether this user is active
@@ -85,10 +79,10 @@ interface User {
     public function setIsActive($flag);
 
     /**
-     * Checks whether this user is a super user and thus can perform everything
-     * @return @boolean True if this user is a super user, false otherwise
+     * Gets whether this user is active
+     * @return boolean
      */
-    public function isSuperUser();
+    public function isActive();
 
     /**
      * Sets whether this user is a super user
@@ -96,6 +90,12 @@ interface User {
      * @return null
      */
     public function setIsSuperUser($flag);
+
+    /**
+     * Checks whether this user is a super user and thus can perform everything
+     * @return @boolean True if this user is a super user, false otherwise
+     */
+    public function isSuperUser();
 
     /**
      * Checks whether a permission is granted for this user
@@ -121,10 +121,12 @@ interface User {
     public function getRoles();
 
     /**
-     * Gets all the preferences of this user
-     * @return array Array with the name of the setting as key and the setting as value
+     * Sets a preference for this user
+     * @param string $name Name of the preference
+     * @param mixed $value Value for the preference
+     * @return null
      */
-    public function getPreferences();
+    public function setPreference($name, $value);
 
     /**
      * Gets a preference of this user
@@ -135,11 +137,9 @@ interface User {
     public function getPreference($name, $default = null);
 
     /**
-     * Sets a preference for this user
-     * @param string $name Name of the preference
-     * @param mixed $value Value for the preference
-     * @return null
+     * Gets all the preferences of this user
+     * @return array Array with the name of the setting as key and the setting as value
      */
-    public function setPreference($name, $value);
+    public function getPreferences();
 
 }

@@ -3,7 +3,8 @@
 namespace ride\library\security\model;
 
 /**
- * Model of the security data
+ * Interface for a chainable security model
+ * @see ChainSecurityModel
  */
 interface ChainableSecurityModel extends SecurityModel {
 

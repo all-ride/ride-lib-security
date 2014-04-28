@@ -27,10 +27,35 @@ interface SecurityModel {
     public function setSecuredPaths(array $paths);
 
     /**
-     * Creates a new user
-     * @return User
+     * Sets the granted permissions to a role
+     * @param Role $role Role to set the permissions to
+     * @param array $permissionCodes Array with a permission code per element
+     * @return null
      */
-    public function createUser();
+    public function setGrantedPermissionsToRole(Role $role, array $permissionCodes);
+
+    /**
+     * Sets the allowed paths to a role
+     * @param Role $role Role to set the routes to
+     * @param array $paths Array with a path regular expression per element
+     * @return null
+     */
+    public function setAllowedPathsToRole(Role $role, array $paths);
+
+    /**
+     * Saves the provided roles for the provided user
+     * @param User $user User to update
+     * @param array $roles The roles to set to the user
+     * @return null
+     */
+    public function setRolesToUser(User $user, array $roles);
+
+    /**
+     * Gets a user by it's id
+     * @param string $id Id of the user
+     * @return User|null User object if found, null otherwise
+     */
+    public function getUserById($id);
 
     /**
      * Gets a user by it's username
@@ -47,19 +72,38 @@ interface SecurityModel {
     public function getUserByEmail($email);
 
     /**
-     * Find the users which match the provided part of a username
-     * @param string $query Part of a username to match
-     * @return array Array with the usernames which match the provided query
+     * Gets the users
+     * @param array $options Extra options for the query
+     * <ul>
+     *     <li>query</li>
+     *     <li>name</li>
+     *     <li>username</li>
+     *     <li>email</li>
+     *     <li>page</li>
+     *     <li>limit</li>
+     * </ul>
+     * @return array
      */
-    public function findUsersByUsername($query);
+    public function getUsers(array $options = null);
 
     /**
-     * Find the users which match the provided part of a email address
-     * @param string $query Part of a email address
-     * @return array Array with the usernames of the users which match the
-     * provided query
+     * Counts the users
+     * @param array $options Extra options for the query
+     * <ul>
+     *     <li>query</li>
+     *     <li>name</li>
+     *     <li>username</li>
+     *     <li>email</li>
+     * </ul>
+     * @return integer
      */
-    public function findUsersByEmail($query);
+    public function countUsers(array $options = null);
+
+    /**
+     * Creates a new user
+     * @return User
+     */
+    public function createUser();
 
     /**
      * Saves a user to the model
@@ -69,14 +113,6 @@ interface SecurityModel {
     public function saveUser(User $user);
 
     /**
-     * Saves the provided roles for the provided user
-     * @param User $user User to update
-     * @param array $roles The roles to set to the user
-     * @return null
-     */
-    public function setRolesToUser(User $user, array $roles);
-
-    /**
      * Deletes the provided user
      * @param User $user User to delete
      * @return null
@@ -84,10 +120,11 @@ interface SecurityModel {
     public function deleteUser(User $user);
 
     /**
-     * Creates a new role
-     * @return Role
+     * Gets a role by it's id
+     * @param string $id Id of the role
+     * @return Role|null Role object if found, null otherwise
      */
-    public function createRole();
+    public function getRoleById($id);
 
     /**
      * Gets a role by it's name
@@ -98,16 +135,33 @@ interface SecurityModel {
 
     /**
      * Gets all the roles
+     * @param array $options Extra options for the query
+     * <ul>
+     *     <li>name</li>
+     *     <li>query</li>
+     *     <li>page</li>
+     *     <li>limit</li>
+     * </ul>
      * @return array
      */
-    public function getRoles();
+    public function getRoles(array $options = null);
 
     /**
-     * Finds roles by it's name
-     * @param string $query Part of the name
-     * @return array Array with Role objects
+     * Counts the roles
+     * @param array $options Extra options for the query
+     * <ul>
+     *     <li>query</li>
+     *     <li>name</li>
+     * </ul>
+     * @return integer
      */
-    public function findRolesByName($query);
+    public function countRoles(array $options = null);
+
+    /**
+     * Creates a new role
+     * @return Role
+     */
+    public function createRole();
 
     /**
      * Saves a role to the model
@@ -115,22 +169,6 @@ interface SecurityModel {
      * @return null
      */
     public function saveRole(Role $role);
-
-    /**
-     * Sets the granted permissions to a role
-     * @param Role $role Role to set the permissions to
-     * @param array $permissionCodes Array with a permission code per element
-     * @return null
-     */
-    public function setGrantedPermissionsToRole(Role $role, array $permissionCodes);
-
-    /**
-     * Sets the allowed paths to a role
-     * @param Role $role Role to set the routes to
-     * @param array $paths Array with a path regular expression per element
-     * @return null
-     */
-    public function setAllowedPathsToRole(Role $role, array $paths);
 
     /**
      * Deletes a role from the model
@@ -157,13 +195,13 @@ interface SecurityModel {
      * @param string $code Code of the permission
      * @return null
      */
-    public function registerPermission($code);
+    public function addPermission($code);
 
     /**
      * Unregisters an existing permission from the model
      * @param string $code Code of the permission
      * @return null
      */
-    public function unregisterPermission($code);
+    public function deletePermission($code);
 
 }
