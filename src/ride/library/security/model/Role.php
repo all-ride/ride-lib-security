@@ -27,6 +27,19 @@ interface Role {
     public function getName();
 
     /**
+     * Sets the weight of this role
+     * @param integer $weight
+     * @return null
+     */
+    public function setWeight($weight);
+
+    /**
+     * Gets the weight of this role
+     * @return integer
+     */
+    public function getWeight();
+
+    /**
      * Gets the allowed paths of this role
      * @return array Array with a path regular expression per element
      */

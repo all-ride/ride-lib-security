@@ -72,6 +72,19 @@ interface User {
     public function getEmail();
 
     /**
+     * Sets whether this user's email address has been confirmed
+     * @param boolean $flag
+     * @return null
+     */
+    public function setIsEmailConfirmed($flag);
+
+    /**
+     * Gets whether this user's email address has been confirmed
+     * @return boolean
+     */
+    public function isEmailConfirmed();
+
+    /**
      * Sets whether this user is active
      * @param boolean $flag
      * @return null
@@ -119,6 +132,12 @@ interface User {
      * @return array Array of Role objects
      */
     public function getRoles();
+
+    /**
+     * Gets the highest weight of the user's roles
+     * @return integer
+     */
+    public function getRoleWeight();
 
     /**
      * Sets a preference for this user

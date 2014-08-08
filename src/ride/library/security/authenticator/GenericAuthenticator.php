@@ -3,6 +3,7 @@
 namespace ride\library\security\authenticator;
 
 use ride\library\security\authenticator\io\AuthenticatorIO;
+use ride\library\security\exception\EmailAuthenticationException;
 use ride\library\security\exception\InactiveAuthenticationException;
 use ride\library\security\exception\PasswordAuthenticationException;
 use ride\library\security\exception\UnauthorizededException;
@@ -119,6 +120,12 @@ class GenericAuthenticator extends AbstractAuthenticator {
             $this->logout();
 
             throw new UsernameAuthenticationException();
+        }
+
+        if ($user->getEmail() && !$user->isEmailConfirmed()) {
+            $this->logout();
+
+            throw new EmailAuthenticationException();
         }
 
         if (!$user->isActive()) {
