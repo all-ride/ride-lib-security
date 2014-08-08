@@ -28,12 +28,14 @@ class GenericPathMatcher implements PathMatcher {
             }
 
             $lengthPathRegex = strlen($pathRegex);
-            if ($positionAsterix === $lengthPathRegex - 2 && $pathRegex[$lengthPathRegex - 1] == self::ASTERIX) {
-                // match everything beginning with a string, use regular string comparisson
-                if (strncmp($pathRegex, $path, $lengthPathRegex - 2) === 0) {
+            $hasEndAsterix = $positionAsterix === $lengthPathRegex - 2 && $pathRegex[$lengthPathRegex - 1] == self::ASTERIX;
+
+            // match everything beginning with a string, use regular string comparisson
+            if (strncmp($pathRegex, $path, $positionAsterix) === 0) {
+                if ($hasEndAsterix) {
                     return true;
                 }
-
+            } else {
                 continue;
             }
 
