@@ -345,7 +345,11 @@ class SecurityManager {
             $this->model->addPermission($code);
         }
 
-        $user = $this->getUser();
+        try {
+            $user = $this->getUser();
+        } catch (SecurityException $exception) {
+            $user = null;
+        }
 
         if ($user === null) {
             if ($this->log) {
@@ -393,7 +397,12 @@ class SecurityManager {
             return true;
         }
 
-        $user = $this->getUser();
+        try {
+            $user = $this->getUser();
+        } catch (SecurityException $exception) {
+            $user = null;
+        }
+
         if ($user != null) {
             if ($user->isSuperUser() || $user->isPathAllowed($path, $this->pathMatcher)) {
                 if ($this->log) {
