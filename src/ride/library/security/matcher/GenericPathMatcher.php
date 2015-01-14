@@ -17,8 +17,7 @@ class GenericPathMatcher implements PathMatcher {
     public function matchPath($path, array $pathRegexes) {
         foreach ($pathRegexes as $pathRegex) {
             $positionAsterix = strpos($pathRegex, self::ASTERIX);
-
-            if ($positionAsterix === false && strpos($pathRegex, '!') === false) {
+            if ($positionAsterix === false) {
                 // no regular expression characters, use regular comparisson
                 if ($path === $pathRegex) {
                     return true;
