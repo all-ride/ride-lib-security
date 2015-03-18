@@ -64,7 +64,7 @@ interface Authenticator {
      * authentication status for
      * @return User updated user with the information of the authentification
      */
-    public function setUser(User $user);
+    public function setUser(User $user = null);
 
     /**
      * Switch to the provided user to test it's permissions. When logging out,

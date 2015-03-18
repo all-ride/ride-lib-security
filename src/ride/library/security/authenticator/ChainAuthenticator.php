@@ -137,7 +137,7 @@ class ChainAuthenticator extends AbstractAuthenticator {
      * authentication status for
      * @return User updated user with the information of the authentification
      */
-    public function setUser(User $user) {
+    public function setUser(User $user = null) {
         foreach ($this->authenticators as $authenticator) {
             $user = $authenticator->setUser($user);
 
