@@ -22,7 +22,7 @@ abstract class AbstractAuthenticator implements Authenticator {
      * Instance of the current user
      * @var \ride\library\security\model\User
      */
-    protected $user;
+    protected $user = false;
 
     /**
      * Sets the security manager to the authenticator
@@ -88,7 +88,13 @@ abstract class AbstractAuthenticator implements Authenticator {
      * authentication status for
      * @return User updated user with the information of the authentification
      */
-    public function setUser(User $user) {
+    public function setUser(User $user = null) {
+        if ($user === null) {
+            $this->user = false;
+
+            return null;
+        }
+
         $this->user = $user;
 
         return $this->user;

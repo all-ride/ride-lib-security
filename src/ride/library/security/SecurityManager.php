@@ -281,7 +281,7 @@ class SecurityManager {
      * @param \ride\library\security\model\User $user Current user
      * @return null
      */
-    public function setUser(User $user) {
+    public function setUser(User $user = null) {
         $this->authenticator->setUser($user);
     }
 

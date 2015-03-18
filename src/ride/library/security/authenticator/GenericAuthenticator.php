@@ -219,7 +219,13 @@ class GenericAuthenticator extends AbstractAuthenticator {
      * authentication for
      * @return User updated user with the information of the authentification
      */
-    public function setUser(User $user) {
+    public function setUser(User $user = null) {
+        if ($user === null) {
+            $this->user = false;
+
+            return null;
+        }
+
         $username = $user->getUserName();
         $identifier = $this->getIdentifier($username);
 
