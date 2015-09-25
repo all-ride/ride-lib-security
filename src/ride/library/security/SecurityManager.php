@@ -13,6 +13,7 @@ use ride\library\security\exception\SecurityException;
 use ride\library\security\matcher\PathMatcher;
 use ride\library\security\model\SecurityModel;
 use ride\library\security\model\User;
+use ride\library\security\voter\Voter;
 
 /**
  * Facade to the security system
@@ -226,6 +227,23 @@ class SecurityManager {
     }
 
     /**
+     * Sets the permission voter
+     * @param \ride\library\security\voter\Voter $voter
+     * @return null
+     */
+    public function setVoter(Voter $voter) {
+        $this->voter = $voter;
+    }
+
+    /**
+     * Gets the permission voter
+     * @return \ride\library\security\voter\Voter|null
+     */
+    public function getVoter() {
+        return $this->voter;
+    }
+
+    /**
      * Sets the path matcher
      * @param ride\library\security\matcher\\PathMatcher $pathMatcher
      * @return null
@@ -339,39 +357,29 @@ class SecurityManager {
             }
 
             return true;
-        }
-
-        if (!$this->model->hasPermission($code)) {
-            $this->model->addPermission($code);
-        }
-
-        try {
-            $user = $this->getUser();
-        } catch (SecurityException $exception) {
-            $user = null;
-        }
-
-        if ($user === null) {
+        } elseif (!$this->voter) {
             if ($this->log) {
-                $this->log->logDebug('Permission ' . $code . ' denied', 'not authenticated', self::LOG_SOURCE);
-            }
-
-            return false;
-        }
-
-        if ($user->isSuperUser() || $user->isPermissionGranted($code)) {
-            if ($this->log) {
-                $this->log->logDebug('Permission ' . $code . ' granted', 'user ' . $user->getUsername(), self::LOG_SOURCE);
+                $this->log->logDebug('Permission ' . $code . ' is granted', 'no voter set', self::LOG_SOURCE);
             }
 
             return true;
         }
 
-        if ($this->log) {
-            $this->log->logDebug('Permission ' . $code . ' denied', '', self::LOG_SOURCE);
-        }
+        $result = $this->voter->isGranted($code, $this);
 
-        return false;
+        if ($result === true) {
+            if ($this->log) {
+                $this->log->logDebug('Permission ' . $code . ' is granted', 'voter granted', self::LOG_SOURCE);
+            }
+
+            return true;
+        } else {
+            if ($this->log) {
+                $this->log->logDebug('Permission ' . $code . ' is denied', 'voter denied or has no opinion', self::LOG_SOURCE);
+            }
+
+            return false;
+        }
     }
 
     /**
