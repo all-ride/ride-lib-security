@@ -17,7 +17,7 @@
     },    
     "autoload": {
         "psr-0": {
-            "ride\\library\\security\\": ["src/", "test/src/"]
+            "ride\\library\\security\\": ["src/"]
         }
     }
 }
