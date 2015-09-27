@@ -10,7 +10,6 @@ use ride\library\security\authenticator\Authenticator;
 use ride\library\security\exception\PathMatcherNotSetException;
 use ride\library\security\exception\SecurityModelNotSetException;
 use ride\library\security\exception\SecurityException;
-use ride\library\security\matcher\PathMatcher;
 use ride\library\security\model\SecurityModel;
 use ride\library\security\model\User;
 use ride\library\security\voter\Voter;
@@ -88,12 +87,6 @@ class SecurityManager {
     protected $hashAlgorithm;
 
     /**
-     * Matcher for a path against path regular expressions
-     * @var \ride\library\security\matcher\PathMatcher
-     */
-    protected $pathMatcher;
-
-    /**
      * Incoming request to authenticate the user
      * @var \ride\library\http\Request
      */
@@ -117,7 +110,6 @@ class SecurityManager {
 
         $this->eventManager = $eventManager;
         $this->log = null;
-        $this->pathMatcher = null;
         $this->request = null;
     }
 
@@ -174,6 +166,24 @@ class SecurityManager {
     }
 
     /**
+     * Sets the permission voter
+     * @param \ride\library\security\voter\Voter $voter
+     * @return null
+          */
+    public function setVoter(Voter $voter) {
+        $this->voter = $voter;
+        $this->voter->setSecurityManager($this);
+    }
+
+    /**
+     * Gets the permission voter
+     * @return \ride\library\security\voter\Voter|null
+     */
+    public function getVoter() {
+        return $this->voter;
+    }    
+
+    /**
      * Sets the security model
      * @param \ride\library\security\model\SecurityModel $model Security model to use
      * @return null
@@ -224,44 +234,6 @@ class SecurityManager {
         }
 
         return $this->model;
-    }
-
-    /**
-     * Sets the permission voter
-     * @param \ride\library\security\voter\Voter $voter
-     * @return null
-     */
-    public function setVoter(Voter $voter) {
-        $this->voter = $voter;
-    }
-
-    /**
-     * Gets the permission voter
-     * @return \ride\library\security\voter\Voter|null
-     */
-    public function getVoter() {
-        return $this->voter;
-    }
-
-    /**
-     * Sets the path matcher
-     * @param ride\library\security\matcher\\PathMatcher $pathMatcher
-     * @return null
-     */
-    public function setPathMatcher(PathMatcher $pathMatcher) {
-        $this->pathMatcher = $pathMatcher;
-    }
-
-    /**
-     * Gets the path matcher
-     * @return \ride\library\security\matcher\PathMatcher|null
-     */
-    public function getPathMatcher() {
-        if (!$this->pathMatcher) {
-            throw new PathMatcherNotSetException();
-        }
-
-        return $this->pathMatcher;
     }
 
     /**
@@ -351,6 +323,7 @@ class SecurityManager {
      * when no security model has been set
      */
     public function isPermissionGranted($code) {
+        // pre-check
         if (!$this->model) {
             if ($this->log) {
                 $this->log->logDebug('Permission ' . $code . ' is granted', 'no security model set', self::LOG_SOURCE);
@@ -364,18 +337,27 @@ class SecurityManager {
 
             return true;
         }
+        
+        // retrieve the user
+        try {
+            $user = $this->getUser();
+        } catch (SecurityException $exception) {
+            $user = null;
+        }        
 
-        $result = $this->voter->isGranted($code, $this);
+        // get the verdict from the voter
+        $result = $this->voter->isGranted($code, $user);
 
+        // log and return the verdict
         if ($result === true) {
             if ($this->log) {
-                $this->log->logDebug('Permission ' . $code . ' is granted', 'voter granted', self::LOG_SOURCE);
+                $this->log->logDebug('Permission ' . $code . ' is granted', 'voter granted ' . ($user ? $user->getUserName() : 'anonymous'), self::LOG_SOURCE);
             }
 
             return true;
         } else {
             if ($this->log) {
-                $this->log->logDebug('Permission ' . $code . ' is denied', 'voter denied or has no opinion', self::LOG_SOURCE);
+                $this->log->logDebug('Permission ' . $code . ' is denied', 'voter denied '  . ($user ? $user->getUserName() : 'anonymous') . ' or has no opinion', self::LOG_SOURCE);
             }
 
             return false;
@@ -388,44 +370,45 @@ class SecurityManager {
      * @return boolean
      */
     public function isPathAllowed($path) {
+        // pre-check
         if (!$this->model) {
             if ($this->log) {
                 $this->log->logDebug('Path ' . $path . ' allowed', 'no security model set', self::LOG_SOURCE);
             }
 
             return true;
-        }
-
-        $allowed = !$this->pathMatcher->matchPath($path, $this->model->getSecuredPaths());
-        if ($allowed) {
+        } elseif (!$this->voter) {
             if ($this->log) {
-                $this->log->logDebug('Path ' . $path . ' allowed', 'path is not secured', self::LOG_SOURCE);
+                $this->log->logDebug('Path ' . $path . ' allowed', 'no voter set', self::LOG_SOURCE);
             }
 
             return true;
         }
-
+        
+        // retrieve the user
         try {
             $user = $this->getUser();
         } catch (SecurityException $exception) {
             $user = null;
-        }
+        }        
 
-        if ($user != null) {
-            if ($user->isSuperUser() || $user->isPathAllowed($path, $this->pathMatcher)) {
-                if ($this->log) {
-                    $this->log->logDebug('Path ' . $path . ' is allowed', 'allowed for user ' . $user->getUserName(), self::LOG_SOURCE);
-                }
-
-                return true;
-            } elseif ($this->log) {
-                $this->log->logDebug('Path ' . $path . ' is denied', 'no clearance', self::LOG_SOURCE);
+        // get the verdict from the voter
+        $result = $this->voter->isAllowed($path, $user);
+        
+        // log and return the verdict
+        if ($result === true) {
+            if ($this->log) {
+                $this->log->logDebug('Path ' . $path . ' is allowed', 'voter granted ' . ($user ? $user->getUserName() : 'anonymous'), self::LOG_SOURCE);
             }
-        } elseif ($this->log) {
-            $this->log->logDebug('Path ' . $path . ' is denied', 'not authenticated', self::LOG_SOURCE);
-        }
 
-        return false;
+            return true;
+        } else {
+            if ($this->log) {
+                $this->log->logDebug('Path ' . $path . ' is denied', 'voter denied ' . ($user ? $user->getUserName() : 'anonymous'), self::LOG_SOURCE);
+            }
+
+            return false;
+        }        
     }
 
     /**
