@@ -51,12 +51,12 @@ class ModelVoter extends AbstractVoter {
      */
     public function isGranted($permission, User $user = null) {
         // make sure the permission exists
-        if (!$this->securityModel->hasPermission($code)) {
-            $this->securityModel->addPermission($code);
+        if (!$this->securityModel->hasPermission($permission)) {
+            $this->securityModel->addPermission($permission);
         }
 
         // check the permission
-        if ($user !== null && ($user->isSuperUser() || $user->isPermissionGranted($code))) {
+        if ($user !== null && ($user->isSuperUser() || $user->isPermissionGranted($permission))) {
             return true;
         }
 
