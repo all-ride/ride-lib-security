@@ -117,6 +117,22 @@ class ChainVoter extends AbstractVoter {
     }
 
     /**
+     * Adds multiple voters to the chain
+     * @param array $voters Array of voters
+     * @return null
+     * @see Voter
+     */
+    public function addVoters(array $voters) {
+        foreach ($voters as $index => $voter) {
+            if (!$voter instanceof Voter) {
+                throw new SecurityException('Could not add voters: value at index ' . $index . ' is not an instance of ride\\library\\security\\voter\\Voter');
+            }
+
+            $this->addVoter($voter);
+        }
+    }
+
+    /**
      * Removes a voter from the chain
      * @param Voter $voter Voter to remove
      * @return boolean True if removed, false if not found
