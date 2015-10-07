@@ -10,39 +10,39 @@ use ride\library\security\SecurityManager;
  * Chain of voters to implement your security layer
  */
 class ChainVoter extends AbstractVoter {
-    
+
     /**
      * Strategy which grants access as soon as one voter grants access
      * @var string
      */
     const STRATEGY_AFFIRMATIVE = 'affirmative';
-    
+
     /**
-     * Strategy which grants access when more voters grant access instead of 
+     * Strategy which grants access when more voters grant access instead of
      * denying access
      * @var string
      */
     const STRATEGY_CONSENSUS = 'consensus';
-    
+
     /**
      * Strategy which grants access when all voters grant access
      * @var string
      */
     const STRATEGY_UNANIMOUS = 'unanimous';
-    
+
     /**
      * Strategy of this chain
      * @var string
      */
     private $strategy;
-    
+
     /**
      * Voters of the chain
      * @var array
      * @see Voter
      */
     private $voters;
-    
+
     /**
      * Constructs a new voter chain
      * @param string $strategy Strategy of the chain
@@ -57,10 +57,10 @@ class ChainVoter extends AbstractVoter {
 
         $this->voters = array();
     }
-    
+
     /**
      * Sets the security manager to the authenticator
-     * @param \ride\library\security\SecurityManager $securityManager Instance 
+     * @param \ride\library\security\SecurityManager $securityManager Instance
      * of the security manager
      * @return null
      */
@@ -74,12 +74,12 @@ class ChainVoter extends AbstractVoter {
 
     /**
      * Sets the strategy of this voter
-     * @param string $strategy One of the strategy constants (affirmative, 
+     * @param string $strategy One of the strategy constants (affirmative,
      * consensus or unanimous)
      * @return null
-     * @throw \ride\library\security\exception\SecurityException when an invalid 
+     * @throw \ride\library\security\exception\SecurityException when an invalid
      * strategy is provided
-     */ 
+     */
     public function setStrategy($strategy) {
         if ($strategy !== self::STRATEGY_AFFIRMATIVE && $strategy !== self::STRATEGY_CONSENSUS && $strategy !== self::STRATEGY_UNANIMOUS) {
             throw new SecurityException('Could not set the strategy of this chain: invalid strategy provided, try affirmative, consensus or unanimous');
@@ -141,7 +141,7 @@ class ChainVoter extends AbstractVoter {
         foreach ($this->voters as $i => $v) {
             if ($voter === $v) {
                 unset($this->voters[$i]);
-                
+
                 return true;
             }
         }
@@ -153,7 +153,7 @@ class ChainVoter extends AbstractVoter {
      * Checks if the provided permission is granten by the provided user
      * @param string $permission Code of the permission to check
      * @param \ride\library\security\model\User $user User to check
-     * @return boolean|null True when granted, false when not granted or null 
+     * @return boolean|null True when granted, false when not granted or null
      * when this voter has no opinion
      */
     public function isGranted($permission, User $user = null) {
@@ -166,11 +166,11 @@ class ChainVoter extends AbstractVoter {
 
         foreach ($this->voters as $i => $voter) {
             $result[$i] = $voter->isGranted($permission, $user);
-            
+
             if ($this->strategy === self::STRATEGY_AFFIRMATIVE && $result[$i]) {
                 // affirmative and granted by the voter, we grant the permission
                 return true;
-            } 
+            }
         }
 
         return $this->applyStrategy($result);
@@ -178,12 +178,13 @@ class ChainVoter extends AbstractVoter {
 
     /**
      * Checks if the provided path is granted by the provided user
-     * @param string $permission Code of the permission to check
+     * @param string $path Path to check
+     * @param string $method Request method to check
      * @param \ride\library\security\model\User $user User to check
-     * @return boolean|null True when allowed, false when not allowed or null 
+     * @return boolean|null True when allowed, false when not allowed or null
      * when this voter has no opinion
      */
-    public function isAllowed($path, User $user = null) {
+    public function isAllowed($path, $method = null, User $user = null) {
         if (!$this->voters) {
             // no voters, no opinion
             return null;
@@ -192,12 +193,12 @@ class ChainVoter extends AbstractVoter {
         $result = array();
 
         foreach ($this->voters as $i => $voter) {
-            $result[$i] = $voter->isAllowed($path, $user);
+            $result[$i] = $voter->isAllowed($path, $method, $user);
 
             if ($this->strategy === self::STRATEGY_AFFIRMATIVE && $result[$i]) {
                 // affirmative and allowed by the voter, we allow the path
                 return true;
-            } 
+            }
         }
 
         return $this->applyStrategy($result);

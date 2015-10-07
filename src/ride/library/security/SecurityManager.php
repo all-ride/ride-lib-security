@@ -181,7 +181,7 @@ class SecurityManager {
      */
     public function getVoter() {
         return $this->voter;
-    }    
+    }
 
     /**
      * Sets the security model
@@ -337,13 +337,13 @@ class SecurityManager {
 
             return true;
         }
-        
+
         // retrieve the user
         try {
             $user = $this->getUser();
         } catch (SecurityException $exception) {
             $user = null;
-        }        
+        }
 
         // get the verdict from the voter
         $result = $this->voter->isGranted($code, $user);
@@ -367,9 +367,10 @@ class SecurityManager {
     /**
      * Checks whether the current user is allowed to view the provided path
      * @param string $path Path to check
+     * @param string $method Request method to check
      * @return boolean
      */
-    public function isPathAllowed($path) {
+    public function isPathAllowed($path, $method = null) {
         // pre-check
         if (!$this->model) {
             if ($this->log) {
@@ -384,17 +385,17 @@ class SecurityManager {
 
             return true;
         }
-        
+
         // retrieve the user
         try {
             $user = $this->getUser();
         } catch (SecurityException $exception) {
             $user = null;
-        }        
+        }
 
         // get the verdict from the voter
-        $result = $this->voter->isAllowed($path, $user);
-        
+        $result = $this->voter->isAllowed($path, $method, $user);
+
         // log and return the verdict
         if ($result === true) {
             if ($this->log) {
@@ -408,7 +409,7 @@ class SecurityManager {
             }
 
             return false;
-        }        
+        }
     }
 
     /**

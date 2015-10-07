@@ -11,11 +11,28 @@ class GenericPathMatcher implements PathMatcher {
      * Checks if the provided path matches one of the provided path regular
      * expressions
      * @param string $path Path the match
-     * @param array $pathRegexes Array with path regular expressions
+     * @param string $method Request method to check
+     * @param array $pathRules Array with path rules
      * @return boolean True if matched, false otherwise
      */
-    public function matchPath($path, array $pathRegexes) {
-        foreach ($pathRegexes as $pathRegex) {
+    public function matchPath($path, $method, array $pathRules) {
+        // normalize the incoming method
+        if ($method === null) {
+            $method = 'GET';
+        } else {
+            strtoupper($method);
+        }
+
+        foreach ($pathRules as $pathRule) {
+            $allowedMethods = array();
+
+            $this->extractData($pathRule, $pathRegex, $allowedMethods);
+
+            if ($allowedMethods && !isset($allowedMethods[$method])) {
+                // method not allowed for this path regex
+                continue;
+            }
+
             $positionAsterix = strpos($pathRegex, self::ASTERIX);
             if ($positionAsterix === false) {
                 // no regular expression characters, use regular comparisson
@@ -52,6 +69,34 @@ class GenericPathMatcher implements PathMatcher {
         }
 
         return false;
+    }
+
+    /**
+     * Extracts the path regex and the allowed methods from the path rule
+     * @param string $pathRule
+     * @param string $pathRegex
+     * @param array $allowedMethods
+     * @return null
+     */
+    private function extractData($pathRule, &$pathRegex = null, array &$allowedMethods = array()) {
+        $posOpen = strpos($pathRule, '[');
+        $posClose = strpos($pathRule, ']');
+
+        if ($posOpen === false || $posClose === false || $posClose < $posOpen) {
+            $pathRegex = $pathRule;
+
+            return;
+        }
+
+        $pathRegex = trim(substr($pathRule, 0, $posOpen));
+
+        $methods = substr($pathRule, $posOpen + 1, $posClose - $posOpen - 1);
+        $methods = strtoupper($methods);
+
+        if ($methods) {
+            $allowedMethods = explode(',', $methods);
+            $allowedMethods = array_flip($allowedMethods);
+        }
     }
 
 }
