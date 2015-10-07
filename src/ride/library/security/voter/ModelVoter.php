@@ -28,7 +28,7 @@ class ModelVoter extends AbstractVoter {
 
     /**
      * Sets the security manager to the authenticator
-     * @param \ride\library\security\SecurityManager $securityManager Instance 
+     * @param \ride\library\security\SecurityManager $securityManager Instance
      * of the security manager
      * @return null
      */
@@ -46,7 +46,7 @@ class ModelVoter extends AbstractVoter {
      * Checks if the provided permission is granted by the current user
      * @param string $permission Code of the permission to check
      * @param \ride\library\security\model\User $user User to check
-     * @return boolean|null True when granted, false when not granted or null 
+     * @return boolean|null True when granted, false when not granted or null
      * when this voter has no opinion
      */
     public function isGranted($permission, User $user = null) {
@@ -66,19 +66,20 @@ class ModelVoter extends AbstractVoter {
     /**
      * Checks if the provided path is allowed for the provided user
      * @param string $path Path to check
+     * @param string $method Request method to check
      * @param \ride\library\security\model\User $user User to check
-     * @return boolean|null True when granted, false when not granted or null 
+     * @return boolean|null True when granted, false when not granted or null
      * when this voter has no opinion
      */
-    public function isAllowed($path, User $user = null) {
+    public function isAllowed($path, $method = null, User $user = null) {
         // check the path
-        if (!$this->pathMatcher->matchPath($path, $this->securityModel->getSecuredPaths())) {
+        if (!$this->pathMatcher->matchPath($path, $method, $this->securityModel->getSecuredPaths())) {
             return true;
-        } elseif ($user !== null && ($user->isSuperUser() || $user->isPathAllowed($path, $this->pathMatcher))) {
+        } elseif ($user !== null && ($user->isSuperUser() || $user->isPathAllowed($path, $method, $this->pathMatcher))) {
             return true;
         }
 
         return false;
-    } 
-    
+    }
+
 }

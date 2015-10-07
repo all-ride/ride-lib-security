@@ -22,7 +22,7 @@ interface Voter {
      * Checks if the provided permission is granted for the provided user
      * @param string $permission Code of the permission to check
      * @param \ride\library\security\model\User $user User to check
-     * @return boolean|null True when granted, false when not granted or null 
+     * @return boolean|null True when granted, false when not granted or null
      * when this voter has no opinion
      */
     public function isGranted($permission, User $user = null);
@@ -30,10 +30,11 @@ interface Voter {
     /**
      * Checks if the provided path is allowed for the provided user
      * @param string $path Path to check
+     * @param string $method Request method to check
      * @param \ride\library\security\model\User $user User to check
-     * @return boolean|null True when granted, false when not granted or null 
+     * @return boolean|null True when granted, false when not granted or null
      * when this voter has no opinion
      */
-    public function isAllowed($path, User $user = null);
+    public function isAllowed($path, $method = null, User $user = null);
 
 }
