@@ -23,21 +23,23 @@ class GenericPathMatcher implements PathMatcher {
             strtoupper($method);
         }
 
+        $result = false;
+
         foreach ($pathRules as $pathRule) {
             $allowedMethods = array();
 
-            $this->extractData($pathRule, $pathRegex, $allowedMethods);
+            $this->extractData($pathRule, $pathRegex, $allowedMethods, $isNot);
 
-            if ($allowedMethods && !isset($allowedMethods[$method])) {
-                // method not allowed for this path regex
-                continue;
-            }
+            $isMethodAllowed = !($allowedMethods && !isset($allowedMethods[$method]));
 
             $positionAsterix = strpos($pathRegex, self::ASTERIX);
             if ($positionAsterix === false) {
                 // no regular expression characters, use regular comparisson
                 if ($path === $pathRegex) {
-                    return true;
+                    $result = $isNot ? false : true;
+                    if (!$isMethodAllowed) {
+                        $result = !$result;
+                    }
                 }
 
                 continue;
@@ -49,9 +51,18 @@ class GenericPathMatcher implements PathMatcher {
             // match everything beginning with a string, use regular string comparisson
             if (strncmp($pathRegex, $path, $positionAsterix) === 0) {
                 if ($hasEndAsterix) {
-                    return true;
+                    $result = $isNot ? false : true;
+                    if (!$isMethodAllowed) {
+                        $result = !$result;
+                    }
+
+                    continue;
                 }
             } else {
+                if ($isNot && $result) {
+                    $result = false;
+                }
+
                 continue;
             }
 
@@ -64,11 +75,14 @@ class GenericPathMatcher implements PathMatcher {
             $regex = '/^' . $regex . '$/';
 
             if (preg_match($regex, $path)) {
-                return true;
+                $result = $isNot ? false : true;
+                if (!$isMethodAllowed) {
+                    $result = !$result;
+                }
             }
         }
 
-        return false;
+        return $result;
     }
 
     /**
@@ -76,9 +90,16 @@ class GenericPathMatcher implements PathMatcher {
      * @param string $pathRule
      * @param string $pathRegex
      * @param array $allowedMethods
+     * @param boolean $isNot
      * @return null
      */
-    private function extractData($pathRule, &$pathRegex = null, array &$allowedMethods = array()) {
+    private function extractData($pathRule, &$pathRegex = null, array &$allowedMethods = array(), &$isNot = false) {
+        $isNot = false;
+        if (strpos($pathRule, '!') === 0) {
+            $isNot = true;
+            $pathRule = substr($pathRule, 1);
+        }
+
         $posOpen = strpos($pathRule, '[');
         $posClose = strpos($pathRule, ']');
 
@@ -97,6 +118,7 @@ class GenericPathMatcher implements PathMatcher {
             $allowedMethods = explode(',', $methods);
             $allowedMethods = array_flip($allowedMethods);
         }
+
     }
 
 }
