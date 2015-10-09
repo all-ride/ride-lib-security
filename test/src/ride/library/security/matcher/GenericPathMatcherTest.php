@@ -34,6 +34,26 @@ class GenericPathMatcherTest extends PHPUnit_Framework_TestCase {
             array(true, '/path/to/file', 'GET', array('/path/**', '!/path/to/file', '/p**')),
             array(true, '/path/to/file', 'GET', array('/path/**', '!/path/to/file [POST]')),
             array(false, '/path/to/file', 'GET', array('/path/**', '!/path/to/file [GET]')),
+            array(true, '/admin/security', 'GET', array(
+                '/admin**',
+                '/api**',
+                '!/api/v1/surveys** [GET]',
+                '!/api/v1/survey-questions** [GET]',
+                '!/api/v1/survey-entry-answers [POST]',
+                '!/api/v1/survey-evaluations [GET]',
+                '!/api/v1/survey-evaluations/*/evaluate/* [POST]',
+                '!/api/v1/survey-entries [POST,PATCH]',
+            )),
+            array(false, '/api/v1/surveys/3', 'GET', array(
+                '/admin**',
+                '/api**',
+                '!/api/v1/surveys** [GET]',
+                '!/api/v1/survey-questions** [GET]',
+                '!/api/v1/survey-entry-answers [POST]',
+                '!/api/v1/survey-evaluations [GET]',
+                '!/api/v1/survey-evaluations/*/evaluate/* [POST]',
+                '!/api/v1/survey-entries [POST,PATCH]',
+            )),
         );
     }
 
