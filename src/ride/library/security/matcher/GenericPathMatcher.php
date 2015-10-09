@@ -59,10 +59,6 @@ class GenericPathMatcher implements PathMatcher {
                     continue;
                 }
             } else {
-                if ($isNot && $result) {
-                    $result = false;
-                }
-
                 continue;
             }
 
