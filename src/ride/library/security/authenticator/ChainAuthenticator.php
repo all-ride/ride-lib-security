@@ -151,7 +151,7 @@ class ChainAuthenticator extends AbstractAuthenticator {
      * Switch to the provided user to test it's permissions. When logging out,
      * the user before switching will again be the current user
      * @param string $username The username of the user to switch to
-     * @return null
+     * @return boolean
      * @throws \ride\library\security\exception\UnauthorizedException when not
      * authenticated
      * @throws \ride\library\security\exception\UserNotFoundException when the
@@ -160,12 +160,31 @@ class ChainAuthenticator extends AbstractAuthenticator {
     public function switchUser($username) {
         foreach ($this->authenticators as $authenticator) {
             try {
-                $authenticator->switchUser($username);
-                $this->user = $authenticator->getUser();
+                if ($authenticator->switchUser($username)) {
+                    $this->user = $authenticator->getUser();
+
+                    return true;
+                }
             } catch (SecurityException $e) {
 
             }
         }
+
+        return false;
+    }
+
+    /**
+     * Checks is the current user is a switched user
+     * @return boolean
+     */
+    public function isSwitchedUser() {
+        foreach ($this->authenticators as $authenticator) {
+            if ($authenticator->getUser() && $authenticator->isSwitchedUser()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

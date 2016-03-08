@@ -9,7 +9,6 @@ use ride\library\security\exception\PasswordAuthenticationException;
 use ride\library\security\exception\UnauthorizededException;
 use ride\library\security\exception\UsernameAuthenticationException;
 use ride\library\security\exception\UserNotFoundException;
-use ride\library\security\exception\UserSwitchException;
 use ride\library\security\exception\SecurityException;
 use ride\library\security\exception\UnauthorizedException;
 use ride\library\security\model\User;
@@ -150,9 +149,12 @@ class GenericAuthenticator extends AbstractAuthenticator {
     public function logout() {
         $this->user = false;
 
-        $this->io->set(self::VAR_AUTHENTICATION_STRING, null);
-        $this->io->set(self::VAR_SWITCHED_USERNAME, null);
-        $this->io->set(self::VAR_USERNAME, null);
+        if ($this->io->get(self::VAR_SWITCHED_USERNAME)) {
+            $this->io->set(self::VAR_SWITCHED_USERNAME, null);
+        } else {
+            $this->io->set(self::VAR_AUTHENTICATION_STRING, null);
+            $this->io->set(self::VAR_USERNAME, null);
+        }
     }
 
     /**
@@ -268,26 +270,22 @@ class GenericAuthenticator extends AbstractAuthenticator {
      * requested user could not be found
      */
     public function switchUser($username) {
-        $user = $this->getUser();
-        if (!$user) {
-            throw new UnauthorizedException('Could not switch user: not authenticated');
-        }
-
-        if (!$user->isSuperUser() && !$user->isPermissionGranted(SecurityManager::PERMISSION_SWITCH)) {
-            throw new UnauthorizedException('Could not switch user: not allowed');
-        }
-
-        $switchedUser = $this->securityManager->getSecurityModel()->getUserByUsername($username);
-        if (!$switchedUser) {
-            throw new UserNotFoundException('Could not switch user: user not found');
-        }
-
-        if (!$user->isSuperUser() && $switchedUser->isSuperUser()) {
-            throw new UserSwitchException('Could not switch user: ' . $switchedUser->getUserName() . ' is a super user .');
-        }
-
-        $this->user = $switchedUser;
+        $this->user = $this->getUserForSwitch($username);
         $this->io->set(self::VAR_SWITCHED_USERNAME, $username);
+
+        return true;
+    }
+
+    /**
+     * Checks is the current user is a switched user
+     * @return boolean
+     */
+    public function isSwitchedUser() {
+        if ($this->getUser() && $this->io->get(self::VAR_SWITCHED_USERNAME)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

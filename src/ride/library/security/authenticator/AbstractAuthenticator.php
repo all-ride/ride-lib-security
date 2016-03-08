@@ -4,6 +4,9 @@ namespace ride\library\security\authenticator;
 
 use ride\library\http\Request;
 use ride\library\security\exception\UsernameAuthenticationException;
+use ride\library\security\exception\UnauthorizedException;
+use ride\library\security\exception\UserNotFoundException;
+use ride\library\security\exception\UserSwitchException;
 use ride\library\security\model\User;
 use ride\library\security\SecurityManager;
 
@@ -104,14 +107,53 @@ abstract class AbstractAuthenticator implements Authenticator {
      * Switch to the provided user to test it's permissions. When logging out,
      * the user before switching will again be the current user
      * @param string $username The username of the user to switch to
-     * @return null
+     * @return boolean
      * @throws \ride\library\security\exception\UnauthorizedException when not
      * authenticated
      * @throws \ride\library\security\exception\UserNotFoundException when the
      * requested user could not be found
      */
     public function switchUser($username) {
-        return null;
+        return false;
+    }
+
+    /**
+     * Checks is the current user is a switched user
+     * @return boolean
+     */
+    public function isSwitchedUser() {
+        return false;
+    }
+
+    /**
+     * Gets and checks the user the switch to
+     * @param string username
+     * @return \ride\library\security\model\User
+     * @throws \ride\library\security\exception\UnauthorizedException when not
+     * authenticated or allowed
+     * @throws \ride\library\security\exception\UserNotFoundException when the
+     * user does not exist
+     */
+    protected function getUserForSwitch($username) {
+        $user = $this->getUser();
+        if (!$user) {
+            throw new UnauthorizedException('Could not switch user: not authenticated');
+        }
+
+        if (!$user->isSuperUser() && !$user->isPermissionGranted(SecurityManager::PERMISSION_SWITCH)) {
+            throw new UnauthorizedException('Could not switch user: not allowed');
+        }
+
+        $switchedUser = $this->securityManager->getSecurityModel()->getUserByUsername($username);
+        if (!$switchedUser) {
+            throw new UserNotFoundException('Could not switch user: user not found');
+        }
+
+        if (!$user->isSuperUser() && $switchedUser->isSuperUser()) {
+            throw new UserSwitchException('Could not switch user: ' . $switchedUser->getUserName() . ' is a super user .');
+        }
+
+        return $switchedUser;
     }
 
 }

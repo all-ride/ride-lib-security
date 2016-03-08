@@ -287,6 +287,14 @@ class SecurityManager {
     }
 
     /**
+     * Checks whether the current user is a switched user
+     * @return boolean
+     */
+    public function isSwitchedUser() {
+        return $this->authenticator->isSwitchedUser();
+    }
+
+    /**
      * Login a user
      * @param string $username The provided username
      * @param string $password The provided password

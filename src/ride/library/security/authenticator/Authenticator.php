@@ -70,12 +70,18 @@ interface Authenticator {
      * Switch to the provided user to test it's permissions. When logging out,
      * the user before switching will again be the current user
      * @param string $username The username of the user to switch to
-     * @return null
+     * @return boolean
      * @throws \ride\library\security\exception\UnauthorizedException when not
      * authenticated
      * @throws \ride\library\security\exception\UserNotFoundException when the
      * requested user could not be found
      */
     public function switchUser($username);
+
+    /**
+     * Checks is the current user is a switched user
+     * @return boolean
+     */
+    public function isSwitchedUser();
 
 }
