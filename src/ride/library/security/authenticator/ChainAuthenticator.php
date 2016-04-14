@@ -158,6 +158,8 @@ class ChainAuthenticator extends AbstractAuthenticator {
      * requested user could not be found
      */
     public function switchUser($username) {
+        $exception = null;
+
         foreach ($this->authenticators as $authenticator) {
             try {
                 if ($authenticator->switchUser($username)) {
@@ -166,8 +168,14 @@ class ChainAuthenticator extends AbstractAuthenticator {
                     return true;
                 }
             } catch (SecurityException $e) {
-
+                if (!$exception) {
+                    $exception = $e;
+                }
             }
+        }
+
+        if ($exception) {
+            throw $exception;
         }
 
         return false;
