@@ -114,7 +114,6 @@ class GenericPathMatcher implements PathMatcher {
             $allowedMethods = explode(',', $methods);
             $allowedMethods = array_flip($allowedMethods);
         }
-
     }
 
 }
