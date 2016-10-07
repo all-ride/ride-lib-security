@@ -32,13 +32,25 @@ class ChainSecurityModel implements SecurityModel {
     }
 
     /**
+     * Gets the security models of this chain
+     * @return array Array with SecurityModel instances
+     */
+    public function getSecurityModels() {
+        return $this->models;
+    }
+
+    /**
      * Adds a security model to the chain
      * @param SecurityModel $securityModel
-     * @return null
+     * @return boolean True when model is added, false otherwise
      */
     public function addSecurityModel(ChainableSecurityModel $securityModel) {
         if ($securityModel->ping()) {
             $this->models[] = $securityModel;
+
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -50,7 +62,7 @@ class ChainSecurityModel implements SecurityModel {
     public function removeSecurityModel(ChainableSecurityModel $securityModel) {
         foreach ($this->models as $index => $model) {
             if ($model === $securityModel) {
-                unset($models[$index]);
+                unset($this->models[$index]);
 
                 return true;
             }

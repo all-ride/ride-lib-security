@@ -73,6 +73,8 @@ abstract class AbstractAuthenticator implements Authenticator {
      * @return null
      */
     public function logout() {
+        $this->user = false;
+
         return null;
     }
 

@@ -2,7 +2,6 @@
     "name": "ride/lib-security",
     "description": "Security library of the Ride framework",
     "license": "MIT",
-    "version": "0.10.1",
     "authors": [
         {
             "name": "Joris Vandeweerd",
@@ -10,14 +9,19 @@
         }
     ],
     "require": {
-        "ride/lib-encryption": ">=0.1.0",
-        "ride/lib-event": ">=0.3.2",
-        "ride/lib-http": ">=0.2.1",
-        "ride/lib-log": ">=0.2.1"
-    },    
+        "ride/lib-encryption": "^1.0.0",
+        "ride/lib-event": "^1.0.0",
+        "ride/lib-http": "^1.0.0",
+        "ride/lib-log": "^1.0.0"
+    },
     "autoload": {
         "psr-0": {
             "ride\\library\\security\\": ["src/"]
+        }
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "ride\\library\\security\\": ["test/src/"]
         }
     }
 }
