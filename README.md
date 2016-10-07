@@ -109,7 +109,7 @@ Use an instance of this class to handle your security.
 
 Check this code sample to see some possibilities of this library:
 
-_Note: some classes used in this example are taken from from [ride/lib-security-generic](https://github.com/all-ride/ride-lib-security-generic), [ride/web-security](https://github.com/all-ride/ride-web-security) or [ride/web-security-generic](https://github.com/all-ride/ride-web-security-generic).
+_Note: some classes used in this example are taken from from [ride/lib-security-generic](https://github.com/all-ride/ride-lib-security-generic), [ride/web-security](https://github.com/all-ride/ride-web-security) or [ride/web-security-generic](https://github.com/all-ride/ride-web-security-generic)._
 
 ```php
 <?php
@@ -169,6 +169,7 @@ function createSecurityManager(EventManager $eventManager, File $fileSecurityMod
     $chainVoter->addVoter($modelVoter);
     
     // now, we create the security model
+    // as example we use a file based security model which is good for a small user base.
     $xmlSecurityModelIO = new XmlSecurityModelIO($fileSecurityModel);
     $genericSecurityModel = new GenericSecurityModel($xmlSecurityModelIO, $eventManager, $hashAlgorithm);
     
@@ -293,7 +294,7 @@ function manageSecurityModel(SecurityManager $securityManager) {
 }
 
 function handleSecurity(SecurityManager $securityManager, Request $request) {
-    // set the request to the security manager to detect logged in user from previous requests
+    // set the request to the security manager to detect the user from previous requests
     $securityManager->setRequest($request);
     
     // get the current user
