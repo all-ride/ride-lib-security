@@ -27,8 +27,12 @@ class ChainAuthenticator extends AbstractAuthenticator {
      * @param Authenticator $authenticator
      * @return null
      */
-    public function addAuthenticator(Authenticator $authenticator) {
-        $this->authenticators[] = $authenticator;
+    public function addAuthenticator(Authenticator $authenticator, $prepend = false) {
+        if ($prepend) {
+            array_unshift($this->authenticators, $authenticator);
+        } else {
+            $this->authenticators[] = $authenticator;
+        }
     }
 
     /**
