@@ -16,7 +16,7 @@ class UnauthorizedException extends SecurityException {
      * @param Exception $previous Previous exception which caused this exception
      * @return null
      */
-    public function __construct($message = null, $code = null, Exception $previous = null) {
+    public function __construct($message = 'Unauthorized', $code = null, Exception $previous = null) {
         if ($code === null) {
             $code = 202;
         }
